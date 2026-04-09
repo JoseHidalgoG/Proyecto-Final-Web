@@ -46,6 +46,9 @@ public class Formulario {
     @Property("sincronizado")
     private boolean sincronizado = false; //tiene valor false por defecto hasta confirmar con el cliente
 
+    @Property("estado")
+    private Boolean estado = true;
+
     public Formulario() {}
 
     public Formulario(Usuario usuario,
@@ -100,4 +103,11 @@ public class Formulario {
 
     public void setSincronizado(boolean s) { this.sincronizado = s; }
 
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
 }
