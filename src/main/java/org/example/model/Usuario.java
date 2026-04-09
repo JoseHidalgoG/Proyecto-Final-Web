@@ -39,6 +39,7 @@ public class Usuario {
         this.email = email;
         this.passwordHash = password;
         this.rol = rol;
+        this.estado = true;
     }
 
     public Usuario() {};
