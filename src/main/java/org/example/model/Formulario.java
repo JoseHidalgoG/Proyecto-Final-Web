@@ -46,6 +46,24 @@ public class Formulario {
     @Property("sincronizado")
     private boolean sincronizado = false; //tiene valor false por defecto hasta confirmar con el cliente
 
+    public Formulario() {}
+
+    public Formulario(Usuario usuario,
+                      String nombreEncuestado,
+                      String sector,
+                      NivelEducacion nivelEducacion,
+                      double latitud,
+                      double longitud,
+                      String fotoBase64) {
+        this.usuario = usuario;
+        this.nombreEncuestado = nombreEncuestado;
+        this.sector = sector;
+        this.nivelEducacion = nivelEducacion;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.fotoBase64 = fotoBase64;
+    }
+
     public ObjectId getId(){ return id; }
 
     public Usuario getUsuario() { return usuario; }
