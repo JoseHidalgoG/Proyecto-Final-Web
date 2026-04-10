@@ -1,18 +1,18 @@
-import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom"
 
-import { useAuth } from "@/features/auth/auth-context";
-import { AuthProvider } from "@/features/auth/auth-provider";
-import { LoginPage } from "@/features/auth/login-page";
-import { AppHomePage } from "@/features/dashboard/app-home-page";
+import { useAuth } from "@/Pages/Auth/hooks/auth-context"
+import { AuthProvider } from "@/Pages/Auth/auth-provider"
+import { LoginPage } from "@/Pages/Auth/Login"
+import { AppHomePage } from "@/Pages/Dashboard/Dashboard"
 
 function ProtectedApp() {
-  const { session } = useAuth();
+  const { session } = useAuth()
 
   if (!session) {
-    return <Navigate replace to="/login" />;
+    return <Navigate replace to="/login" />
   }
 
-  return <AppHomePage />;
+  return <AppHomePage />
 }
 
 export function AppRouter() {
@@ -27,5 +27,5 @@ export function AppRouter() {
         </Routes>
       </Router>
     </AuthProvider>
-  );
+  )
 }

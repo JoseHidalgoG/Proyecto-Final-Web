@@ -7,9 +7,8 @@ import {
   WifiOff,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/features/auth/auth-context"
+import { useAuth } from "@/Pages/Auth/hooks/auth-context"
 
 const modulePreviews = [
   {
@@ -53,8 +52,7 @@ export function AppHomePage() {
                 Proyecto Final Web
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Cliente inicial para el levantamiento de encuestas de la Oficina de
-                Planeamiento. (Por Miguel Rodríguez y José Alberto)
+                Levantamiento de encuestas de la Oficina de Planeamiento
               </p>
             </div>
 
@@ -80,14 +78,12 @@ export function AppHomePage() {
             <WifiOff aria-hidden="true" className="h-7 w-7" />
             <h2 className="mt-5 text-2xl font-bold">Modo local activo</h2>
             <p className="mt-3 text-sm leading-6 text-primary-foreground/85">
-              Este corte trabaja sin servidor. La sesión vive solo en memoria y se
-              limpia al cerrar o recargar la aplicación.
+
             </p>
           </div>
 
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {modulePreviews.map((module) => {
                 const Icon = module.icon
 
@@ -106,7 +102,6 @@ export function AppHomePage() {
                     <span className="mt-2 block text-sm leading-6 text-muted-foreground">
                       {module.description}
                     </span>
-
                   </button>
                 )
               })}
