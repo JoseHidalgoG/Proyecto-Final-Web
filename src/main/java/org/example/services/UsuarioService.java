@@ -132,7 +132,7 @@ public class UsuarioService {
         return u;
     }
 
-    public void validarDatos(UsuarioRequest usuario)
+    private void validarDatos(UsuarioRequest usuario)
     {
         //lo primero a verificar es que los campos no esten vacios
         if (
@@ -160,7 +160,7 @@ public class UsuarioService {
         }
     }
 
-    public void validarAdmin(Usuario usuario)
+    private void validarAdmin(Usuario usuario)
     {
         if (usuario.getRol() != Usuario.Rol.ADMIN)
         {
