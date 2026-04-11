@@ -9,6 +9,7 @@ import org.example.repository.UsuarioRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Arrays;
+import java.util.List;
 
 /*
 * clase sujeta a cambios.
@@ -40,6 +41,72 @@ public class UsuarioService {
                 password_hash,
                 admin ? Usuario.Rol.ADMIN : Usuario.Rol.PERSONAL);
         return UsuarioResponse.from(usuarioRepository.crear(usuario));
+    }
+
+    //busca el usuario con el id dado y actualiza los campos con los datos proporcionados
+    public UsuarioResponse actualizarUsuario(String id, UsuarioRequest request, Usuario actor, Boolean admin){
+        //para validar
+        validarAdmin(actor);
+        validarDatos(request);
+
+        //buscar usuario y validar que exista y este activado
+        Usuario user = usuarioRepository.buscarPorId(id);
+        if(user == null)
+        {
+            throw new NotFoundResponse("Usuario no encontrado");
+        }
+        if(user.getEstado() == false)
+        {
+            throw new ForbiddenResponse("No se puede actualizar usuarios desactivados");
+        }
+
+        //ya cuando se valida to se hace lavado de activos en la contrasena y se actualizan los campos
+        String password_hash = BCrypt.hashpw(request.password, BCrypt.gensalt());
+
+        user.setNombre(request.nombre);
+        user.setEmail(request.email);
+        user.setPasswordHash(password_hash);
+        if (admin) {
+            user.setRol(Usuario.Rol.ADMIN);
+        } else {
+            user.setRol(Usuario.Rol.PERSONAL);
+        }
+        // se retorna con la llamada al repositorio para persistir los cambios
+        return UsuarioResponse.from(usuarioRepository.actualizar(user.getId().toString() , user.getNombre(), user.getEmail(), user.getPasswordHash(), user.getRol()));
+
+    }
+
+    public UsuarioResponse buscarUsuarioPorId(String id){
+        return UsuarioResponse.from(usuarioRepository.buscarPorId(id));
+    }
+
+    public UsuarioResponse buscarUsuarioPorNombre(String nombre){
+        return UsuarioResponse.from(usuarioRepository.buscarPorNombre(nombre));
+    }
+
+    public UsuarioResponse buscarUsuarioPorEmail(String email){
+        return UsuarioResponse.from(usuarioRepository.buscarPorEmail(email));
+    }
+
+    /* funciones de listado
+    * sujeta a cambios
+    * */
+    public List<Usuario> listarTodos(){
+        return usuarioRepository.listarTodos();
+    }
+
+    public List<Usuario> listarActivos(){
+        return usuarioRepository.listarTodosActivos();
+    }
+
+    public List<Usuario> listarPorRol (Usuario.Rol rol){
+        return usuarioRepository.listarPorRol(rol);
+    }
+
+    //para desactivar usuarios
+    public void desactivar(String id)
+    {
+        usuarioRepository.desactivar(id);
     }
 
     /*

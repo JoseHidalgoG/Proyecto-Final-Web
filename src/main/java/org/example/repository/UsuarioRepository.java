@@ -15,7 +15,7 @@ public class UsuarioRepository {
 
     private final Datastore ds = Database.getDatastore();
 
-    public UsuarioRepository() {};
+    public UsuarioRepository() {}
 
     //Crear usuario: crea un usuario a ser almacenado en la bd con los datos ingresados
     public Usuario crear(Usuario usuario) {
@@ -27,7 +27,7 @@ public class UsuarioRepository {
     * actualiza los campos con los datos proporcionados en los argumentos.
     * Para actualizar la contrasena debe crear un hash nuevo.
     * */
-    public void actualizar(String id, String nombre, String email, String password_hash, Usuario.Rol rol){
+    public Usuario actualizar(String id, String nombre, String email, String password_hash, Usuario.Rol rol){
         ds.find(Usuario.class)
                 .filter(Filters.eq("_id", new ObjectId(id)))
                 .update(
@@ -37,6 +37,7 @@ public class UsuarioRepository {
                         UpdateOperators.set("passwordHash", password_hash),
                         UpdateOperators.set("rol", rol)
                 );
+        return ds.find(Usuario.class).filter(Filters.eq("nombre", nombre)).first();
     }
     //funciones para buscar (ya sea por cualquier campo casi)
     public Usuario buscarPorNombre(String nombre){
@@ -56,6 +57,23 @@ public class UsuarioRepository {
                 .first();
     }
 
+    //metodos para listar
+    public List<Usuario> listarTodos(){
+        return ds.find(Usuario.class).iterator().toList();
+    }
+
+    public List<Usuario> listarTodosActivos(){
+        return ds.find(Usuario.class)
+                .filter(Filters.eq("estado", true))
+                .iterator().toList();
+    }
+
+    public List<Usuario> listarPorRol(Usuario.Rol rol){
+        return ds.find(Usuario.class)
+                .filter(Filters.eq("rol", rol.toString()))
+                .iterator().toList();
+    }
+
     /*
     Para verificar que la contraseña dada coincida con el hash
     util para autenticar
@@ -64,13 +82,7 @@ public class UsuarioRepository {
         return BCrypt.checkpw(password, hash);
     }
 
-    public List<Usuario> listarTodos(){
-        return ds.find(Usuario.class)
-                .filter(Filters.eq("activo", true))
-                .iterator()
-                .toList();
-    }
-
+    //para desactivar dinosaurios
     public void desactivar(String id){
         ds.find(Usuario.class)
                 .filter(Filters.eq("_id", new ObjectId(id)))
