@@ -15,10 +15,13 @@ import java.util.List;
 * puede cambiar
 * */
 public class FormularioService {
-    private final FormularioRepository formularioRepository = new FormularioRepository();
-    private final UsuarioRepository usuarioRepository = new UsuarioRepository();
+    private final FormularioRepository formularioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public FormularioService() {}
+    public FormularioService(FormularioRepository formularioRepository, UsuarioRepository usuarioRepository) {
+        this.formularioRepository = formularioRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     //Para crear las instancias de formulario tomando en cuenta la entrada
     public FormularioResponse registrar(FormularioRequest request, String idUsuario)

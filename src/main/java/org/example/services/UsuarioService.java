@@ -17,9 +17,11 @@ import java.util.List;
 * Aqui se llama las funciones de repositorio para usuarios aplicando la lógica de negocio
 * */
 public class UsuarioService {
-    private final UsuarioRepository usuarioRepository = new UsuarioRepository();
+    private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService() {}
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     /*
     * funcion para registrar usuarios nuevos, validando que cumpla con las condiciones
