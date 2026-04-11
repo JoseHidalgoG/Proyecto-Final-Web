@@ -8,6 +8,7 @@ import org.example.model.Usuario;
 import org.example.repository.UsuarioRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,16 +92,28 @@ public class UsuarioService {
     /* funciones de listado
     * sujeta a cambios
     * */
-    public List<Usuario> listarTodos(){
-        return usuarioRepository.listarTodos();
+    public List<UsuarioResponse> listarTodos(){
+        List<Usuario> usuarios = usuarioRepository.listarTodos();
+        return new ArrayList<>(usuarios
+                .stream()
+                .map(UsuarioResponse::from)
+                .toList());
     }
 
-    public List<Usuario> listarActivos(){
-        return usuarioRepository.listarTodosActivos();
+    public List<UsuarioResponse> listarActivos(){
+        return usuarioRepository
+                .listarTodosActivos()
+                .stream()
+                .map(UsuarioResponse::from)
+                .toList();
     }
 
-    public List<Usuario> listarPorRol (Usuario.Rol rol){
-        return usuarioRepository.listarPorRol(rol);
+    public List<UsuarioResponse> listarPorRol (Usuario.Rol rol){
+        return usuarioRepository
+                .listarPorRol(rol)
+                .stream()
+                .map(UsuarioResponse::from)
+                .toList();
     }
 
     //para desactivar usuarios
