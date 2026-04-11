@@ -1,11 +1,11 @@
 package org.example.model;
 
 public enum NivelEducacion {
-    PRIMARIA("Primaria"),
-    SECUNDARIA("Secundaria"),
-    GRADO_UNIVERSITARIO("Grado Universitario"),
-    POSTGRADO("Postgrado"),
-    DOCTORADO("Doctorado");
+    BASICO("BASICO"),
+    MEDIO("MEDIO"),
+    GRADO_UNIVERSITARIO("GRADO UNIVERSITARIO"),
+    POSTGRADO("POSTGRADO"),
+    DOCTORADO("DOCTORADO");
 
     private final String etiqueta;
     NivelEducacion(String etiqueta) {
