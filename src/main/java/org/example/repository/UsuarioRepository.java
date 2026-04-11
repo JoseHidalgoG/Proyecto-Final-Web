@@ -27,8 +27,7 @@ public class UsuarioRepository {
     * actualiza los campos con los datos proporcionados en los argumentos.
     * Para actualizar la contrasena debe crear un hash nuevo.
     * */
-    public void actualizar(String id, String nombre, String email, String password, Usuario.Rol rol){
-        String password_hash = BCrypt.hashpw(password, BCrypt.gensalt());
+    public void actualizar(String id, String nombre, String email, String password_hash, Usuario.Rol rol){
         ds.find(Usuario.class)
                 .filter(Filters.eq("_id", new ObjectId(id)))
                 .update(

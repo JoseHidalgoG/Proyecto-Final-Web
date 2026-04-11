@@ -1,9 +1,12 @@
 package org.example.services;
 
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.NotFoundResponse;
 import org.example.dto.UsuarioRequest;
 import org.example.dto.UsuarioResponse;
 import org.example.model.Usuario;
 import org.example.repository.UsuarioRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Arrays;
 
@@ -28,10 +31,13 @@ public class UsuarioService {
         //Luego se pasa a validar que lo introducido cumpla con las reglas
         validarDatos(request);
 
+        //se hashea la contrasena
+        String password_hash = BCrypt.hashpw(request.password, BCrypt.gensalt());
+
         //Se pasa a instanciar el objeto de usuario y se persiste en la db
         Usuario usuario = new Usuario(request.nombre,
                 request.email,
-                request.password,
+                password_hash,
                 admin ? Usuario.Rol.ADMIN : Usuario.Rol.PERSONAL);
         return UsuarioResponse.from(usuarioRepository.crear(usuario));
     }
