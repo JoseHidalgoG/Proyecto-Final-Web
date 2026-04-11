@@ -1,5 +1,7 @@
 package org.example.services;
 
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.NotFoundResponse;
 import org.example.dto.FormularioRequest;
 import org.example.dto.FormularioResponse;
 import org.example.model.Formulario;
@@ -38,6 +40,15 @@ public class FormularioService {
     //para actualizar los registros
     public FormularioResponse actualizar(String id, FormularioRequest request)
     {
+        Formulario formulario = formularioRepository.buscarPorId(id);
+        if(formulario == null || !formulario.getEstado()){
+            throw new NotFoundResponse("formulario no encontrado");
+        }
+        if(formulario.isSincronizado())
+        {
+            throw new ForbiddenResponse("No se puede actualizar un formulario sincronizado");
+        }
+
         //validar que la entrada cumpla con las reglas
         validarDatos(request);
 
@@ -90,6 +101,14 @@ public class FormularioService {
         )
         {
             throw new  IllegalArgumentException("El formulario no puede estar vacio, asegure llenar todos lo campos");
+        }
+
+        //para validar que el nivel de educacion no se haya introducido erroneamente
+        try {
+            NivelEducacion.valueOf(request.nivelEscolar.toUpperCase());
+        }
+        catch (IllegalArgumentException e) {
+            throw new  IllegalArgumentException("Nivel de educacion invalido: " + request.nivelEscolar);
         }
 
         //para saber si la geolocalizacion no se obtuvo (wip)
