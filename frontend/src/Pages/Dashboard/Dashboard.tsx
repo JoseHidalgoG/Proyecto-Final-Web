@@ -9,12 +9,14 @@ import {
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/Pages/Auth/hooks/auth-context"
+import { Link } from "react-router-dom"
 
 const modulePreviews = [
   {
     title: "Encuestas",
     description: "Captura de nombre, sector, nivel escolar, ubicación y foto.",
     icon: ClipboardList,
+    url: "/app/encuestas/nueva",
   },
   {
     title: "Pendientes",
@@ -43,7 +45,7 @@ export function AppHomePage() {
   }
 
   return (
-    <main className="min-h-svh px-4 py-5 sm:px-6 lg:px-8">
+    <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <header className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
@@ -88,21 +90,23 @@ export function AppHomePage() {
                 const Icon = module.icon
 
                 return (
-                  <button
-                    className="min-h-36 rounded-lg border border-border bg-background p-4 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    key={module.title}
-                    type="button"
-                  >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-primary">
-                      <Icon aria-hidden="true" className="h-5 w-5" />
-                    </span>
-                    <span className="mt-4 block text-base font-bold text-foreground">
-                      {module.title}
-                    </span>
-                    <span className="mt-2 block text-sm leading-6 text-muted-foreground">
-                      {module.description}
-                    </span>
-                  </button>
+                  <Link to={module.url as string}>
+                    <button
+                      className="min-h-36 rounded-lg border border-border bg-background p-4 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                      key={module.title}
+                      type="button"
+                    >
+                      <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-primary">
+                        <Icon aria-hidden="true" className="h-5 w-5" />
+                      </span>
+                      <span className="mt-4 block text-base font-bold text-foreground">
+                        {module.title}
+                      </span>
+                      <span className="mt-2 block text-sm leading-6 text-muted-foreground">
+                        {module.description}
+                      </span>
+                    </button>
+                  </Link>
                 )
               })}
             </div>
