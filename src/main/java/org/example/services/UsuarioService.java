@@ -1,7 +1,11 @@
 package org.example.services;
 
+import org.example.dto.UsuarioRequest;
+import org.example.dto.UsuarioResponse;
 import org.example.model.Usuario;
 import org.example.repository.UsuarioRepository;
+
+import java.util.Arrays;
 
 /*
 * clase sujeta a cambios.
@@ -16,21 +20,20 @@ public class UsuarioService {
     * funcion para registrar usuarios nuevos, validando que cumpla con las condiciones
     * establecidas
     * */
-    public Usuario registrarUsuario(String nombre, String email, String password, Usuario.Rol rol)
+    public UsuarioResponse registrarUsuario(UsuarioRequest request, Usuario actor, Boolean admin)
     {
-        //No se puede tener dos usuarios con un mismo correo
-        if(usuarioRepository.buscarPorEmail(email) != null)
-        {
-            throw new IllegalArgumentException("Ya existe un usuario con ese email");
-        }
+        //antes de empezar se debe verificar el usuario que llama la funcion tenga la
+        //autorizacion necesaria para crear usuarios (tener admin)
+        validarAdmin(actor);
+        //Luego se pasa a validar que lo introducido cumpla con las reglas
+        validarDatos(request);
 
-        //El password debe tener al menos 5 caracteres
-        if(password.length() < 5)
-        {
-            throw new IllegalArgumentException("La contrasena debe tener al menos 5 caracteres");
-        }
-
-        return usuarioRepository.crear(nombre, email, password, rol);
+        //Se pasa a instanciar el objeto de usuario y se persiste en la db
+        Usuario usuario = new Usuario(request.nombre,
+                request.email,
+                request.password,
+                admin ? Usuario.Rol.ADMIN : Usuario.Rol.PERSONAL);
+        return UsuarioResponse.from(usuarioRepository.crear(usuario));
     }
 
     /*
@@ -54,5 +57,41 @@ public class UsuarioService {
         }
 
         return u;
+    }
+
+    public void validarDatos(UsuarioRequest usuario)
+    {
+        //lo primero a verificar es que los campos no esten vacios
+        if (
+                usuario == null ||
+                usuario.nombre == null ||
+                usuario.nombre.isBlank() ||
+                usuario.email == null ||
+                usuario.email.isBlank() ||
+                usuario.password == null ||
+                usuario.password.isBlank())
+        {
+            throw new IllegalArgumentException("Campos vacios detectados, Asegurese de llenarlos todos");
+        }
+
+        //luego se pasa a verificar que el correo tenga arroba
+        if(!usuario.email.contains("@"))
+        {
+            throw new IllegalArgumentException("correo no valido");
+        }
+
+        //el password debe tener por lo menos
+        if (usuario.password.length() < 4)
+        {
+            throw new IllegalArgumentException("El password debe tener al menos 4 caracteres");
+        }
+    }
+
+    public void validarAdmin(Usuario usuario)
+    {
+        if (usuario.getRol() != Usuario.Rol.ADMIN)
+        {
+            throw new IllegalArgumentException("Usuario no autorizado");
+        }
     }
 }

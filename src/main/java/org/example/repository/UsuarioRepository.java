@@ -18,9 +18,7 @@ public class UsuarioRepository {
     public UsuarioRepository() {};
 
     //Crear usuario: crea un usuario a ser almacenado en la bd con los datos ingresados
-    public Usuario crear(String nombre, String email, String password, Usuario.Rol rol){
-        String hashed_ps = BCrypt.hashpw(password, BCrypt.gensalt());
-        Usuario usuario = new Usuario(nombre, email, hashed_ps, rol);
+    public Usuario crear(Usuario usuario) {
         ds.save(usuario);
         return usuario;
     }
@@ -37,7 +35,7 @@ public class UsuarioRepository {
                         new UpdateOptions(),
                         UpdateOperators.set("nombre", nombre),
                         UpdateOperators.set("email", email),
-                        UpdateOperators.set("password", password_hash),
+                        UpdateOperators.set("passwordHash", password_hash),
                         UpdateOperators.set("rol", rol)
                 );
     }
