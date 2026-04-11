@@ -9,7 +9,6 @@ import org.example.repository.UsuarioRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -27,7 +26,7 @@ public class UsuarioService {
     * funcion para registrar usuarios nuevos, validando que cumpla con las condiciones
     * establecidas
     * */
-    public UsuarioResponse registrarUsuario(UsuarioRequest request, Usuario actor, Boolean admin)
+    public UsuarioResponse registrarUsuario(UsuarioRequest request, UsuarioResponse actor, Boolean admin)
     {
         //antes de empezar se debe verificar el usuario que llama la funcion tenga la
         //autorizacion necesaria para crear usuarios (tener admin)
@@ -47,7 +46,7 @@ public class UsuarioService {
     }
 
     //busca el usuario con el id dado y actualiza los campos con los datos proporcionados
-    public UsuarioResponse actualizarUsuario(String id, UsuarioRequest request, Usuario actor, Boolean admin){
+    public UsuarioResponse actualizarUsuario(String id, UsuarioRequest request, UsuarioResponse actor, Boolean admin){
         //para validar
         validarAdmin(actor);
         validarDatos(request);
@@ -175,9 +174,9 @@ public class UsuarioService {
         }
     }
 
-    private void validarAdmin(Usuario usuario)
+    private void validarAdmin(UsuarioResponse usuario)
     {
-        if (usuario.getRol() != Usuario.Rol.ADMIN)
+        if (usuario.rol() != Usuario.Rol.ADMIN)
         {
             throw new IllegalArgumentException("Usuario no autorizado");
         }
