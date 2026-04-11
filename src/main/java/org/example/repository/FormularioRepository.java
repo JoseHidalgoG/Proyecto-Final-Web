@@ -8,7 +8,6 @@ import org.bson.types.ObjectId;
 import org.example.database.Database;
 import org.example.model.Formulario;
 import org.example.model.NivelEducacion;
-import org.example.model.Usuario;
 
 import java.util.List;
 //clase sujeta a cambios
@@ -17,14 +16,7 @@ public class FormularioRepository {
 
     public FormularioRepository() {}
 
-    public Formulario crear(Usuario usuario,
-                            String nombreEncuestado,
-                            String sector,
-                            NivelEducacion nivelEducacion,
-                            double latitud,
-                            double longitud,
-                            String fotoBase64){
-        Formulario formulario = new Formulario(usuario, nombreEncuestado, sector, nivelEducacion, latitud, longitud, fotoBase64);
+    public Formulario guardar(Formulario formulario){
         ds.save(formulario);
         return formulario;
     }
