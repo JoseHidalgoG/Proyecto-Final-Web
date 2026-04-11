@@ -6,6 +6,7 @@ import dev.morphia.query.filters.Filters;
 import dev.morphia.query.updates.UpdateOperators;
 import org.bson.types.ObjectId;
 import org.example.database.Database;
+import org.example.dto.FormularioRequest;
 import org.example.model.Formulario;
 import org.example.model.NivelEducacion;
 
@@ -53,8 +54,8 @@ public class FormularioRepository {
                 .toList();
     }
 
-    public Formulario buscarPorId(ObjectId id){
-        return ds.find(Formulario.class).filter(Filters.eq("_id", id)).first();
+    public Formulario buscarPorId(String id){
+        return ds.find(Formulario.class).filter(Filters.eq("_id", new ObjectId(id))).first();
     }
 
     //para marcar las encuestas como sincronizadas una vez que se manden al servidor
@@ -64,18 +65,19 @@ public class FormularioRepository {
                 .update(new UpdateOptions(), UpdateOperators.set("sincronizado", true));
     }
 
-    public void actualizar(String id, Formulario formulario){
+    public Formulario actualizar(String id, FormularioRequest formulario){
         ds.find(Formulario.class)
                 .filter(Filters.eq("_id", new ObjectId(id)))
                 .update(
                         new UpdateOptions(),
-                        UpdateOperators.set("nombreEncuestado", formulario.getNombreEncuestado()),
-                        UpdateOperators.set("sector", formulario.getSector()),
-                        UpdateOperators.set("nivelEscolar", formulario.getNivelEducacion()),
-                        UpdateOperators.set("latitud", formulario.getLatitud()),
-                        UpdateOperators.set("longitud", formulario.getLongitud()),
-                        UpdateOperators.set("fotoBase64", formulario.getFotoBase64())
+                        UpdateOperators.set("nombreEncuestado", formulario.nombreEncuestado),
+                        UpdateOperators.set("sector", formulario.sector),
+                        UpdateOperators.set("nivelEscolar", formulario.nivelEscolar),
+                        UpdateOperators.set("latitud", formulario.latitud),
+                        UpdateOperators.set("longitud", formulario.longitud),
+                        UpdateOperators.set("fotoBase64", formulario.fotoBase64)
                         );
+        return buscarPorId(id);
     }
 
     /*
