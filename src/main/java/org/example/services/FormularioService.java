@@ -60,24 +60,40 @@ public class FormularioService {
         return formularioRepository.buscarPorId(id);
     }
 
-    public List<Formulario> listarTodos(){
-        return formularioRepository.listarTodos();
+    public List<FormularioResponse> listarTodos(){
+        return formularioRepository.listarTodos()
+                .stream()
+                .map(FormularioResponse::from)
+                .toList();
     }
 
-    public List<Formulario> listarPorSector(String sector){
-        return formularioRepository.listarPorSector(sector);
+    public List<FormularioResponse> listarPorSector(String sector){
+        return formularioRepository.listarPorSector(sector)
+                .stream()
+                .map(FormularioResponse::from)
+                .toList();
     }
 
-    public List<Formulario> listarPorNivelEducacion(String nivelEducacion){
-        return formularioRepository.listarPorNivelEducacion(NivelEducacion.valueOf(nivelEducacion));
+    public List<FormularioResponse> listarPorNivelEducacion(String nivelEducacion){
+        return formularioRepository.
+                listarPorNivelEducacion(NivelEducacion.valueOf(nivelEducacion.toUpperCase()))
+                .stream()
+                .map(FormularioResponse::from)
+                .toList();
     }
 
-    public List<Formulario> listarPorUsuario(String usuario){
-        return formularioRepository.listarPorUsuario(usuario);
+    public List<FormularioResponse> listarPorUsuario(String usuario){
+        return formularioRepository.listarPorUsuario(usuario)
+                .stream()
+                .map(FormularioResponse::from)
+                .toList();
     }
 
-    public List<Formulario> listarPendientes(){
-        return formularioRepository.listarPendientes();
+    public List<FormularioResponse> listarPendientes(){
+        return formularioRepository.listarPendientes()
+                .stream()
+                .map(FormularioResponse::from)
+                .toList();
     }
 
     //para marcar las encuestas como sincronizadas una vez que se este conectado al servidor
@@ -123,7 +139,7 @@ public class FormularioService {
         return new Formulario(usuario,
                 request.nombreEncuestado,
                 request.sector,
-                NivelEducacion.valueOf(request.nivelEscolar),
+                NivelEducacion.valueOf(request.nivelEscolar.toUpperCase()),
                 request.latitud,
                 request.longitud,
                 request.fotoBase64);
