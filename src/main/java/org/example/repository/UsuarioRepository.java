@@ -37,7 +37,7 @@ public class UsuarioRepository {
                         UpdateOperators.set("passwordHash", password_hash),
                         UpdateOperators.set("rol", rol)
                 );
-        return ds.find(Usuario.class).filter(Filters.eq("nombre", nombre)).first();
+        return ds.find(Usuario.class).filter(Filters.eq("_id", new ObjectId(id))).first();
     }
     //funciones para buscar (ya sea por cualquier campo casi)
     public Usuario buscarPorNombre(String nombre){
@@ -86,7 +86,7 @@ public class UsuarioRepository {
     public void desactivar(String id){
         ds.find(Usuario.class)
                 .filter(Filters.eq("_id", new ObjectId(id)))
-                .update(new UpdateOptions(), UpdateOperators.set("activo", false));
+                .update(new UpdateOptions(), UpdateOperators.set("estado", false));
 
     }
 }
