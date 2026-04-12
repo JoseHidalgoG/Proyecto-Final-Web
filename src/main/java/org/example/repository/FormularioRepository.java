@@ -41,12 +41,12 @@ public class FormularioRepository {
     // lo mismo pero por nivel de educacion
     public List<Formulario> listarPorNivelEducacion(NivelEducacion nivelEducacion){
         return ds.find(Formulario.class)
-                .filter(Filters.eq("nivelEducacion", nivelEducacion.getEtiqueta()))
+                .filter(Filters.eq("nivelEducacion", nivelEducacion))
                 .iterator()
                 .toList();
     }
 
-    //para listar todas las encuestas disponible para vista
+    //para listar todas las encuestas disponibles para vista
     public List<Formulario> listarTodos(){
         return ds.find(Formulario.class)
                 .filter(Filters.eq("estado", true))
@@ -72,7 +72,7 @@ public class FormularioRepository {
                         new UpdateOptions(),
                         UpdateOperators.set("nombreEncuestado", formulario.nombreEncuestado),
                         UpdateOperators.set("sector", formulario.sector),
-                        UpdateOperators.set("nivelEscolar", formulario.nivelEscolar),
+                        UpdateOperators.set("nivelEducacion", formulario.nivelEscolar),
                         UpdateOperators.set("latitud", formulario.latitud),
                         UpdateOperators.set("longitud", formulario.longitud),
                         UpdateOperators.set("fotoBase64", formulario.fotoBase64)
