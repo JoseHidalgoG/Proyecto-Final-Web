@@ -13,6 +13,7 @@ import org.example.services.FormularioService;
 import org.example.services.UsuarioService;
 import org.example.util.JwtFilter;
 import org.example.util.JwtUtil;
+import org.example.websocket.WsFormularioHandler;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class Main {
     static FormularioRepository formularioRepository = new FormularioRepository();
     static UsuarioService usuarioService = new UsuarioService(usuarioRepository);
     static FormularioService formularioService = new FormularioService(formularioRepository, usuarioRepository);
+    static WsFormularioHandler wsHandler = new WsFormularioHandler(formularioService);
 
     static void main() {
         Javalin app = Javalin.create(javalinConfig -> {
@@ -164,6 +166,13 @@ public class Main {
                             ctx.status(204);
                         });
 
+                    });
+
+                    ws("/ws/sync", ws -> {
+                        ws.onConnect(wsHandler::onConnect);
+                        ws.onMessage(wsHandler::onMessage);
+                        ws.onClose(wsHandler::onClose);
+                        ws.onError(wsHandler::onError);
                     });
                 });
             }));
