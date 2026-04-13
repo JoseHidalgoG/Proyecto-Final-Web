@@ -143,7 +143,7 @@ public class Main {
                         UsuarioRequest request =
                             ctx.bodyAsClass(UsuarioRequest.class);
                         Boolean esAdmin = Boolean.parseBoolean(
-                            ctx.pathParam("admin")
+                            ctx.queryParam("admin")
                         );
                         UsuarioResponse actor = usuarioService.buscarUsuarioPorId(
                             ctx.attribute("usuarioId")
@@ -168,7 +168,7 @@ public class Main {
                             UsuarioRequest request =
                                 ctx.bodyAsClass(UsuarioRequest.class);
                             Boolean esAdmin = Boolean.parseBoolean(
-                                ctx.pathParam("admin")
+                                ctx.queryParam("admin")
                             );
                             ctx.json(usuarioService.actualizarUsuario(
                                 ctx.pathParam("id"), request, actor, esAdmin
