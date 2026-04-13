@@ -161,7 +161,7 @@ public class Main {
 
                     path("/{id}", () -> {
                         put(ctx -> {
-                            JwtFilter.validar(ctx);
+                            JwtFilter.validarAdmin(ctx);
                             UsuarioResponse actor = usuarioService.buscarUsuarioPorId(
                                 ctx.attribute("usuarioId")
                             );
