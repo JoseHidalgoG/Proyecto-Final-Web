@@ -27,7 +27,7 @@ public class WsFormularioHandler {
     public void onConnect(WsConnectContext ctx)
     {
         //se pide el token de la sesion
-        String token = ctx.pathParam("token");
+        String token = ctx.queryParam("token");
 
         //y luego obtiene el id del usuario asociado al token y se valida
         String usuarioId = JwtUtil.extraerUsuarioId(token);
