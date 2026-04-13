@@ -185,13 +185,15 @@ public class Main {
 
                     });
 
-                    ws("/ws/sync", ws -> {
-                        ws.onConnect(wsHandler::onConnect);
-                        ws.onMessage(wsHandler::onMessage);
-                        ws.onClose(wsHandler::onClose);
-                        ws.onError(wsHandler::onError);
-                    });
                 });
+
+                ws("/ws/sync", ws -> {
+                    ws.onConnect(wsHandler::onConnect);
+                    ws.onMessage(wsHandler::onMessage);
+                    ws.onClose(wsHandler::onClose);
+                    ws.onError(wsHandler::onError);
+                });
+
             }));
 
             //metodos para manejar errores
