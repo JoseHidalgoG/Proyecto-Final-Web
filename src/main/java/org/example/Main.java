@@ -25,13 +25,15 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 * */
 public class Main {
 
-    static UsuarioRepository usuarioRepository =  new UsuarioRepository();
-    static FormularioRepository formularioRepository = new FormularioRepository();
-    static UsuarioService usuarioService = new UsuarioService(usuarioRepository);
-    static FormularioService formularioService = new FormularioService(formularioRepository, usuarioRepository);
-    static WsFormularioHandler wsHandler = new WsFormularioHandler(formularioService);
-
     static void main() {
+
+        UsuarioRepository usuarioRepository =  new UsuarioRepository();
+        FormularioRepository formularioRepository = new FormularioRepository();
+        UsuarioService usuarioService = new UsuarioService(usuarioRepository);
+        FormularioService formularioService = new FormularioService(formularioRepository, usuarioRepository);
+        WsFormularioHandler wsHandler = new WsFormularioHandler(formularioService);
+
+
         Javalin app = Javalin.create(javalinConfig -> {
 
             //configuracion de CORS
