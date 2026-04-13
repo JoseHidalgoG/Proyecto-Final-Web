@@ -98,7 +98,7 @@ public class ClienteGrpc  extends JFrame {
         panelBuscar.add(txtBuscarId);
         panelBuscar.add(btnListar);
         panelLista.add(panelBuscar, BorderLayout.NORTH);
-        panelForm.add(new JScrollPane(tabla), BorderLayout.CENTER);
+        panelLista.add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         //Layout principal
         JSplitPane splitPane = new JSplitPane(
