@@ -4,7 +4,7 @@ import type { LoginCredentials, UserSession } from '../interfaces/types'
 
 export type AuthContextValue = {
     session: UserSession | null
-    signIn: (credentials: LoginCredentials) => UserSession
+    signIn: (credentials: LoginCredentials) => Promise<UserSession>
     signOut: () => void
 }
 

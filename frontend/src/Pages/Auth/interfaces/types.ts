@@ -5,6 +5,7 @@ export type UserSession = {
   nombre: string;
   email: string;
   rol: UserRole;
+  token: string;
 };
 
 export type LoginCredentials = {

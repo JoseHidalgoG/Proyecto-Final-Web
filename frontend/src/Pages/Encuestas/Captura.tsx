@@ -7,12 +7,15 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/Pages/Auth/hooks/auth-context"
 
-import { memoryFormularioStore } from "./Actions/memory-formulario-store"
+import {
+  crearFormulario,
+  type FormularioResponse,
+} from "./Actions/formularios-api"
 import {
   isNivelEducacion,
   nivelesEducacion,
 } from "./constants/niveles-educacion"
-import type { FormularioLocal, NivelEducacion } from "./interfaces/types"
+import type { NivelEducacion } from "./interfaces/types"
 
 type CapturaFormState = {
   nombreEncuestado: string
@@ -20,7 +23,7 @@ type CapturaFormState = {
   nivelEducacion: NivelEducacion | ""
 }
 
-type CapturaErrors = Partial<Record<keyof CapturaFormState, string>>
+type CapturaErrors = Partial<Record<keyof CapturaFormState | "general", string>>
 
 const initialFormState: CapturaFormState = {
   nombreEncuestado: "",
@@ -32,7 +35,8 @@ export function CapturaPage() {
   const { session } = useAuth()
   const [form, setForm] = useState<CapturaFormState>(initialFormState)
   const [errors, setErrors] = useState<CapturaErrors>({})
-  const [lastSaved, setLastSaved] = useState<FormularioLocal | null>(null)
+  const [lastSaved, setLastSaved] = useState<FormularioResponse | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function updateField<Field extends keyof CapturaFormState>(
     field: Field,
@@ -66,7 +70,7 @@ export function CapturaPage() {
     return nextErrors
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const nextErrors = validate()
@@ -84,14 +88,40 @@ export function CapturaPage() {
       return
     }
 
-    const savedFormulario = memoryFormularioStore.create(session.id, {
-      nombreEncuestado: form.nombreEncuestado.trim(),
-      sector: form.sector.trim(),
-      nivelEducacion: form.nivelEducacion,
-    })
+    setIsSubmitting(true)
 
-    setLastSaved(savedFormulario)
-    setForm(initialFormState)
+    try {
+      const position = await getCurrentPosition()
+
+      if (position.coords.latitude === 0 || position.coords.longitude === 0) {
+        throw new Error("No se pudo obtener una geolocalizacion valida.")
+      }
+
+      const savedFormulario = await crearFormulario(
+        {
+          nombreEncuestado: form.nombreEncuestado.trim(),
+          sector: form.sector.trim(),
+          nivelEscolar: form.nivelEducacion,
+          latitud: position.coords.latitude,
+          longitud: position.coords.longitude,
+          fotoBase64: "",
+        },
+        session.token,
+      )
+
+      setLastSaved(savedFormulario)
+      setForm(initialFormState)
+    } catch (error) {
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        general:
+          error instanceof Error
+            ? error.message
+            : "No se pudo guardar el formulario.",
+      }))
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -111,8 +141,8 @@ export function CapturaPage() {
                 Captura de encuesta
               </h1>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Registra los datos base del formulario antes de agregar
-                geolocalizacion, foto y sincronizacion.
+                Registra los datos base del formulario. Al guardar se tomara la
+                ubicacion actual del dispositivo.
               </p>
             </div>
           </div>
@@ -123,7 +153,7 @@ export function CapturaPage() {
             <div className="flex gap-3">
               <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 text-primary" />
               <div>
-                <p className="font-semibold">Formulario guardado en memoria.</p>
+                <p className="font-semibold">Formulario guardado en el servidor.</p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
                   Ultima captura: {lastSaved.nombreEncuestado} en{" "}
                   {lastSaved.sector}.
@@ -214,17 +244,34 @@ export function CapturaPage() {
               ) : null}
             </div>
 
-            {/* Pendiente: Geolocalizacion, foto base64, edicion, eliminacion y
-                sincronizacion se agregaran en modulos separados. 
-                
-                Jose A. debe implementa rne backend*/}
+            {errors.general ? (
+              <p className="text-sm font-medium text-destructive">
+                {errors.general}
+              </p>
+            ) : null}
 
-            <Button className="w-full" size="lg" type="submit">
-              Guardar formulario
+            <Button className="w-full" disabled={isSubmitting} size="lg" type="submit">
+              {isSubmitting ? "Guardando..." : "Guardar formulario"}
             </Button>
           </form>
         </section>
       </div>
     </main>
   )
+}
+
+function getCurrentPosition() {
+  if (!navigator.geolocation) {
+    return Promise.reject(
+      new Error("El navegador no soporta geolocalizacion."),
+    )
+  }
+
+  return new Promise<GeolocationPosition>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000,
+    })
+  })
 }

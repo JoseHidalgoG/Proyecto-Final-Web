@@ -10,6 +10,7 @@ import { useAuth } from "./hooks/auth-context"
 type LoginErrors = {
     email?: string
     password?: string
+    general?: string
 }
 
 export function LoginPage() {
@@ -18,12 +19,13 @@ export function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [errors, setErrors] = useState<LoginErrors>({})
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     if (session) {
         return <Navigate replace to="/app" />
     }
 
-    function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
 
         const nextErrors: LoginErrors = {}
@@ -42,11 +44,24 @@ export function LoginPage() {
             return
         }
 
-        signIn({
-            email: email.trim(),
-            password,
-        })
-        navigate("/app")
+        setIsSubmitting(true)
+
+        try {
+            await signIn({
+                email: email.trim(),
+                password,
+            })
+            navigate("/app")
+        } catch (error) {
+            setErrors({
+                general:
+                    error instanceof Error
+                        ? error.message
+                        : "No se pudo iniciar sesion.",
+            })
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -111,8 +126,14 @@ export function LoginPage() {
                             ) : null}
                         </div>
 
-                        <Button className="w-full" size="lg" type="submit">
-                            Entrar
+                        {errors.general ? (
+                            <p className="text-sm font-medium text-destructive">
+                                {errors.general}
+                            </p>
+                        ) : null}
+
+                        <Button className="w-full" disabled={isSubmitting} size="lg" type="submit">
+                            {isSubmitting ? "Entrando..." : "Entrar"}
                             <ArrowRight aria-hidden="true" className="h-4 w-4" />
                         </Button>
                     </form>
