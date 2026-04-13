@@ -6,6 +6,7 @@ import org.example.dto.FormularioRequest;
 import org.example.dto.LoginRequest;
 import org.example.dto.UsuarioRequest;
 import org.example.dto.UsuarioResponse;
+import org.example.grpc.FormularioGrpcServiceImpl;
 import org.example.model.Usuario;
 import org.example.repository.FormularioRepository;
 import org.example.repository.UsuarioRepository;
@@ -15,6 +16,7 @@ import org.example.util.JwtFilter;
 import org.example.util.JwtUtil;
 import org.example.websocket.WsFormularioHandler;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -27,12 +29,25 @@ public class Main {
 
     static void main() {
 
+        //repositorios, servicios y websockets del sistema
         UsuarioRepository usuarioRepository =  new UsuarioRepository();
         FormularioRepository formularioRepository = new FormularioRepository();
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
         FormularioService formularioService = new FormularioService(formularioRepository, usuarioRepository);
         WsFormularioHandler wsHandler = new WsFormularioHandler(formularioService);
 
+        //servidor gRPC
+        io.grpc.Server grpcServer;
+        try {
+            grpcServer = io.grpc.ServerBuilder
+                .forPort(9090)
+                .addService(new FormularioGrpcServiceImpl(formularioRepository, usuarioRepository))
+                .build()
+                .start();
+            System.out.println("gRPC escuchando en puerto 9090");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         Javalin app = Javalin.create(javalinConfig -> {
 
@@ -190,5 +205,16 @@ public class Main {
         });
 
         app.start(7070);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Apagando gRPC...");
+            grpcServer.shutdown();
+        }));
+
+        try {
+            grpcServer.awaitTermination();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
