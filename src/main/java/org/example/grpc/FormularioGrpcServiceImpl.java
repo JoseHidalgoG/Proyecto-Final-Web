@@ -37,7 +37,6 @@ public class FormularioGrpcServiceImpl extends FormularioGrpcServiceGrpc.Formula
             }
 
             //validar que los campos no esten vacios
-            request.getNombreEncuestado();
             if(
                     request.getNombreEncuestado().isBlank() ||
                     request.getSector().isBlank() ||
