@@ -28,6 +28,7 @@ const modulePreviews = [
     title: "Mapa",
     description: "Consulta geográfica de formularios recibidos por el servidor.",
     icon: MapPinned,
+    url: "/app/mapa",
   },
   {
     title: "Usuarios",
@@ -67,8 +68,10 @@ export function AppHomePage() {
                 Proyecto Final Web
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Levantamiento de encuestas de la Oficina de Planeamiento
+                Encuestas de la Oficina de Planeamiento
               </p>
+
+              <em className="text-gray-400 text-sm">Por Miguel Rodriguez & José Alberto Hidalgo</em>
             </div>
 
             <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-3 sm:min-w-64">
