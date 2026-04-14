@@ -44,6 +44,13 @@ tasks.named('run') {
     }
 }
 
+tasks.register('runGrpcClient', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta el cliente Swing gRPC'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.example.grpc.client.ClienteGrpc'
+}
+
 repositories {
     mavenCentral()
 }
