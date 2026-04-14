@@ -105,9 +105,7 @@ export function CapturaPage() {
           latitud: position.coords.latitude,
           longitud: position.coords.longitude,
           fotoBase64: "",
-        },
-        session.token,
-      )
+        })
 
       setLastSaved(savedFormulario)
       setForm(initialFormState)

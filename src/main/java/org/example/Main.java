@@ -1,6 +1,11 @@
 package org.example;
 
 import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.Cookie;
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.SameSite;
+import io.javalin.http.UnauthorizedResponse;
 import io.javalin.plugin.bundled.CorsPluginConfig;
 import org.example.dto.FormularioRequest;
 import org.example.dto.LoginRequest;
@@ -54,27 +59,41 @@ public class Main {
 
             //configuracion de CORS
             javalinConfig.bundledPlugins.enableCors(cors ->
-                    cors.addRule(CorsPluginConfig.CorsRule::anyHost));
+                    cors.addRule(regla -> {
+                        regla.anyHost();
+                        regla.allowCredentials = true;
+                    }));
 
             //configuracion de rutas
             javalinConfig.routes.apiBuilder(() -> path("/api", () -> {
 
                 //Rutas publicas
                 //login
-                path("/auth", () -> post("/login", ctx -> {
-                    LoginRequest req = ctx
-                            .bodyAsClass(LoginRequest.class);
-                    Usuario usuario = usuarioService
-                            .login(req.email, req.password);
-                    ctx.json(Map.of(
-                            "token", JwtUtil.generarToken(usuario),
-                            "usuario", Map.of(
-                                    "id", usuario.getId().toHexString(),
-                                    "nombre", usuario.getNombre(),
-                                    "rol", usuario.getRol().name()
-                            )
-                    ));
-                }));
+                path("/auth", () -> {
+                    post("/login", ctx -> {
+                        LoginRequest req = ctx
+                                .bodyAsClass(LoginRequest.class);
+                        Usuario usuario = usuarioService
+                                .login(req.email, req.password);
+                        guardarTokenEnCookie(ctx, JwtUtil.generarToken(usuario));
+                        ctx.json(Map.of(
+                                "usuario", UsuarioResponse.from(usuario)
+                        ));
+                    });
+
+                    get("/me", ctx -> {
+                        JwtFilter.validar(ctx);
+                        String usuarioId = ctx.attribute("usuarioId");
+                        ctx.json(Map.of(
+                                "usuario", usuarioService.buscarUsuarioPorId(usuarioId)
+                        ));
+                    });
+
+                    post("/logout", ctx -> {
+                        limpiarTokenCookie(ctx);
+                        ctx.status(204);
+                    });
+                });
 
                 //Rutas restringidas
                 //formularios
@@ -202,6 +221,14 @@ public class Main {
                 ctx.status(400).json(Map.of("error", e.getMessage()));
             });
 
+            javalinConfig.routes.exception(UnauthorizedResponse.class, (e, ctx) -> {
+                ctx.status(401).json(Map.of("error", e.getMessage()));
+            });
+
+            javalinConfig.routes.exception(ForbiddenResponse.class, (e, ctx) -> {
+                ctx.status(403).json(Map.of("error", e.getMessage()));
+            });
+
             javalinConfig.routes.exception(Exception.class, (e, ctx) -> {
                 ctx.status(500).json(Map.of("error", "Error interno"));
             });
@@ -219,5 +246,31 @@ public class Main {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void guardarTokenEnCookie(Context ctx, String token) {
+        ctx.cookie(new Cookie(
+                JwtUtil.COOKIE_NAME,
+                token,
+                "/",
+                JwtUtil.COOKIE_MAX_AGE_SECONDS,
+                false,
+                true,
+                null,
+                SameSite.LAX
+        ));
+    }
+
+    private static void limpiarTokenCookie(Context ctx) {
+        ctx.cookie(new Cookie(
+                JwtUtil.COOKIE_NAME,
+                "",
+                "/",
+                0,
+                false,
+                true,
+                null,
+                SameSite.LAX
+        ));
     }
 }

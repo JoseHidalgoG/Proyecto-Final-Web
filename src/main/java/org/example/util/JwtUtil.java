@@ -12,12 +12,15 @@ import java.util.Date;
 * por si cualquier cosa pasa*/
 public class JwtUtil {
 
+    public static final String COOKIE_NAME = "auth_token";
+    public static final int COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+
     private static final String SECRETO = System.getenv()
             .getOrDefault("JWT_SECRET", "clave-secreta-temporal");
 
     private static final Algorithm ALGORITMO = Algorithm.HMAC256(SECRETO);
 
-    private static final long TIEMPO_EXPIRACION = 1000L * 60 * 60 * 8;
+    private static final long TIEMPO_EXPIRACION = 1000L * COOKIE_MAX_AGE_SECONDS;
 
     //aqui se generan los tokens
     public static String generarToken(Usuario usuario){

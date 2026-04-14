@@ -8,7 +8,15 @@ import { AppHomePage } from "@/Pages/Dashboard/Dashboard"
 import { CapturaPage } from "@/Pages/Encuestas/Captura"
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { session } = useAuth()
+  const { isLoading, session } = useAuth()
+
+  if (isLoading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4 text-sm text-muted-foreground">
+        Validando sesión...
+      </main>
+    )
+  }
 
   if (!session) {
     return <Navigate replace to="/login" />

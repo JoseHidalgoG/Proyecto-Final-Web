@@ -6,10 +6,10 @@ export type LoginBody = {
 }
 
 export type LoginResponse = {
-  token: string
   usuario: {
     id: string
     nombre: string
+    email: string
     rol: "ADMIN" | "PERSONAL"
   }
 }
@@ -17,6 +17,16 @@ export type LoginResponse = {
 export function login(body: LoginBody) {
   return request<LoginResponse>("/auth/login", {
     body,
+    method: "POST",
+  })
+}
+
+export function getCurrentSession() {
+  return request<LoginResponse>("/auth/me")
+}
+
+export function logout() {
+  return request<void>("/auth/logout", {
     method: "POST",
   })
 }

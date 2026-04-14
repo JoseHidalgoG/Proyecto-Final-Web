@@ -31,12 +31,12 @@ public class JwtFilter {
         }
     }
 
-    //para extraer el token del header
+    //para extraer el token de la cookie de autenticacion
     private static String extraerToken(Context ctx) {
-        String header = ctx.header("Authorization");
-        if (header == null || !header.startsWith("Bearer ")){
-            throw new UnauthorizedResponse("Se requiere Authorization: Bearer <token>");
+        String token = ctx.cookie(JwtUtil.COOKIE_NAME);
+        if (token == null || token.isBlank()){
+            throw new UnauthorizedResponse("Se requiere cookie de autenticacion");
         }
-        return header.substring(7); //para quitar la parte de Bearer
+        return token;
     }
 }

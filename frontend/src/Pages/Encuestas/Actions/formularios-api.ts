@@ -22,48 +22,39 @@ export type FormularioResponse = {
   sincronizado: boolean
 }
 
-export function crearFormulario(body: FormularioBody, token: string) {
+export function crearFormulario(body: FormularioBody) {
   return request<FormularioResponse>("/formularios", {
     body,
     method: "POST",
-    token,
   })
 }
 
-export function listarFormularios(token: string) {
-  return request<FormularioResponse[]>("/formularios", {
-    token,
-  })
+export function listarFormularios() {
+  return request<FormularioResponse[]>("/formularios")
 }
 
-export function listarMisFormularios(token: string) {
-  return request<FormularioResponse[]>("/formularios/mis-registros", {
-    token,
-  })
+export function listarMisFormularios() {
+  return request<FormularioResponse[]>("/formularios/mis-registros")
 }
 
 export function actualizarFormulario(
   id: string,
   body: FormularioBody,
-  token: string,
 ) {
   return request<FormularioResponse>(`/formularios/${id}`, {
     body,
     method: "PUT",
-    token,
   })
 }
 
-export function eliminarFormulario(id: string, token: string) {
+export function eliminarFormulario(id: string) {
   return request<void>(`/formularios/${id}`, {
     method: "DELETE",
-    token,
   })
 }
 
-export function marcarFormularioSincronizado(id: string, token: string) {
+export function marcarFormularioSincronizado(id: string) {
   return request<{ mensaje: string }>(`/formularios/${id}/sincronizar`, {
     method: "PATCH",
-    token,
   })
 }

@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react"
+import { useState, type FormEvent } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -15,17 +15,25 @@ type LoginErrors = {
 
 export function LoginPage() {
     const navigate = useNavigate()
-    const { session, signIn } = useAuth()
+    const { isLoading, session, signIn } = useAuth()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [errors, setErrors] = useState<LoginErrors>({})
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    if (isLoading) {
+        return (
+            <main className="flex min-h-screen items-center justify-center px-4 text-sm text-muted-foreground">
+                Validando sesión...
+            </main>
+        )
+    }
+
     if (session) {
         return <Navigate replace to="/app" />
     }
 
-    async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
 
         const nextErrors: LoginErrors = {}

@@ -3,7 +3,6 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 type RequestOptions = {
   body?: unknown
   method?: HttpMethod
-  token?: string
 }
 
 function getApiBaseUrl() {
@@ -54,12 +53,9 @@ export async function request<T>(path: string, options: RequestOptions = {}) {
     headers.set("Content-Type", "application/json")
   }
 
-  if (options.token) {
-    headers.set("Authorization", `Bearer ${options.token}`)
-  }
-
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    credentials: "include",
     headers,
     method: options.method ?? "GET",
   })

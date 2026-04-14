@@ -6,6 +6,7 @@ import {
   UserCog,
   WifiOff,
 } from "lucide-react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/Pages/Auth/hooks/auth-context"
@@ -38,10 +39,17 @@ const modulePreviews = [
 export function AppHomePage() {
   const navigate = useNavigate()
   const { session, signOut } = useAuth()
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
-  function handleSignOut() {
-    signOut()
-    navigate("/login")
+  async function handleSignOut() {
+    setIsSigningOut(true)
+
+    try {
+      await signOut()
+      navigate("/login")
+    } finally {
+      setIsSigningOut(false)
+    }
   }
 
   return (
@@ -61,15 +69,15 @@ export function AppHomePage() {
             <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-3 sm:min-w-64">
               <div>
                 <p className="text-xs font-semibold uppercase text-muted-foreground">
-                  Sesión local
+                  Sesión activa
                 </p>
                 <p className="mt-1 truncate text-sm font-semibold text-foreground">
                   {session?.email}
                 </p>
               </div>
-              <Button onClick={handleSignOut} variant="outline">
+              <Button disabled={isSigningOut} onClick={handleSignOut} variant="outline">
                 <LogOut aria-hidden="true" className="h-4 w-4" />
-                Cerrar sesión
+                {isSigningOut ? "Cerrando..." : "Cerrar sesión"}
               </Button>
             </div>
           </div>

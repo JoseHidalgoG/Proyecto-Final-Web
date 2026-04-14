@@ -3,9 +3,10 @@ import { createContext, useContext } from 'react'
 import type { LoginCredentials, UserSession } from '../interfaces/types'
 
 export type AuthContextValue = {
+    isLoading: boolean
     session: UserSession | null
     signIn: (credentials: LoginCredentials) => Promise<UserSession>
-    signOut: () => void
+    signOut: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
