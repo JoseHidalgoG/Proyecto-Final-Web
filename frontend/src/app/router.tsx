@@ -6,6 +6,8 @@ import { AuthProvider } from "@/Pages/Auth/auth-provider"
 import { LoginPage } from "@/Pages/Auth/Login"
 import { AppHomePage } from "@/Pages/Dashboard/Dashboard"
 import { CapturaPage } from "@/Pages/Encuestas/Captura"
+import { PendientesPage } from "@/Pages/Encuestas/Pendientes"
+import { UsuariosPage } from "@/Pages/Usuarios/Usuarios"
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isLoading, session } = useAuth()
@@ -20,6 +22,28 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (!session) {
     return <Navigate replace to="/login" />
+  }
+
+  return children
+}
+
+function AdminRoute({ children }: { children: ReactNode }) {
+  const { isLoading, session } = useAuth()
+
+  if (isLoading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4 text-sm text-muted-foreground">
+        Validando sesión...
+      </main>
+    )
+  }
+
+  if (!session) {
+    return <Navigate replace to="/login" />
+  }
+
+  if (session.rol !== "ADMIN") {
+    return <Navigate replace to="/app" />
   }
 
   return children
@@ -47,6 +71,22 @@ export function AppRouter() {
               </ProtectedRoute>
             }
             path="/app/encuestas/nueva"
+          />
+          <Route
+            element={
+              <ProtectedRoute>
+                <PendientesPage />
+              </ProtectedRoute>
+            }
+            path="/app/pendientes"
+          />
+          <Route
+            element={
+              <AdminRoute>
+                <UsuariosPage />
+              </AdminRoute>
+            }
+            path="/app/usuarios"
           />
           <Route element={<Navigate replace to="/login" />} path="*" />
         </Routes>

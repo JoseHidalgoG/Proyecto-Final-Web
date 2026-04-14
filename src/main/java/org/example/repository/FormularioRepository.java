@@ -10,6 +10,7 @@ import org.example.dto.FormularioRequest;
 import org.example.model.Formulario;
 import org.example.model.NivelEducacion;
 
+import java.util.ArrayList;
 import java.util.List;
 //clase sujeta a cambios
 public class FormularioRepository {
@@ -26,10 +27,12 @@ public class FormularioRepository {
     * En listarPorUsuario se retorna una lista de encuestas registradas por un usuario dado
     * */
     public List<Formulario> listarPorUsuario(String usuarioId){
-        return ds.find(Formulario.class)
-                .filter(Filters.eq("usuario", new ObjectId(usuarioId)))
-                .iterator()
-                .toList();
+        return ds.getCollection(Formulario.class)
+                .find(com.mongodb.client.model.Filters.and(
+                        com.mongodb.client.model.Filters.eq("usuario.$id", new ObjectId(usuarioId)),
+                        com.mongodb.client.model.Filters.eq("estado", true)
+                ))
+                .into(new ArrayList<>());
     }
     //Para listar encuestas de un sector dado
     public List<Formulario> listarPorSector(String sector){

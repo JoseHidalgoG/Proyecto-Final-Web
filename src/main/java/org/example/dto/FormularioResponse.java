@@ -2,8 +2,6 @@ package org.example.dto;
 
 import org.example.model.Formulario;
 
-import java.time.LocalDateTime;
-
 public record FormularioResponse(
         String id,
         String usuarioId,
@@ -13,7 +11,7 @@ public record FormularioResponse(
         double latitud,
         double longitud,
         String fotoBase64,
-        LocalDateTime creadoEn,
+        String creadoEn,
         boolean sincronizado
 ) {
     public static FormularioResponse from(Formulario formulario){
@@ -26,7 +24,7 @@ public record FormularioResponse(
                 formulario.getLatitud(),
                 formulario.getLongitud(),
                 formulario.getFotoBase64(),
-                formulario.getCreadoEn(),
+                formulario.getCreadoEn().toString(),
                 formulario.isSincronizado()
         );
 
