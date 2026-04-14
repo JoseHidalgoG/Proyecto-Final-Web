@@ -7,6 +7,7 @@ import { LoginPage } from "@/Pages/Auth/Login"
 import { AppHomePage } from "@/Pages/Dashboard/Dashboard"
 import { CapturaPage } from "@/Pages/Encuestas/Captura"
 import { PendientesPage } from "@/Pages/Encuestas/Pendientes"
+import { SyncQueueRuntime } from "@/Pages/Encuestas/SyncQueueRuntime"
 import { UsuariosPage } from "@/Pages/Usuarios/Usuarios"
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -53,6 +54,7 @@ export function AppRouter() {
   return (
     <AuthProvider>
       <Router>
+        <SyncQueueRuntime />
         <Routes>
           <Route element={<Navigate replace to="/login" />} path="/" />
           <Route element={<LoginPage />} path="/login" />

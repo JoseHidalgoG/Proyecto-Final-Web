@@ -48,7 +48,7 @@ async function getStore(mode: IDBTransactionMode) {
     return { database, store, transaction }
 }
 
-export async function guardarFormularioLocal(input: FormularioCapturaInput) {
+export async function saveLocalForm(input: FormularioCapturaInput) {
     const now = new Date().toISOString()
     const formulario: FormularioLocal = {
         ...input,
@@ -69,7 +69,7 @@ export async function guardarFormularioLocal(input: FormularioCapturaInput) {
     }
 }
 
-export async function listarFormulariosLocales(usuarioId: string) {
+export async function listLocalForms(usuarioId: string) {
     const { database, store } = await getStore('readonly')
 
     try {
@@ -83,7 +83,7 @@ export async function listarFormulariosLocales(usuarioId: string) {
     }
 }
 
-export async function buscarFormularioLocal(id: string) {
+export async function findLocalForm(id: string) {
     const { database, store } = await getStore('readonly')
 
     try {
@@ -95,11 +95,11 @@ export async function buscarFormularioLocal(id: string) {
     }
 }
 
-export async function actualizarFormularioLocal(
+export async function updateLocalForm(
     id: string,
     input: Pick<FormularioCapturaInput, 'nombreEncuestado' | 'sector' | 'nivelEducacion'>,
 ) {
-    const currentFormulario = await buscarFormularioLocal(id)
+    const currentFormulario = await findLocalForm(id)
 
     if (!currentFormulario) {
         throw new Error('Formulario local no encontrado.')
@@ -127,8 +127,8 @@ export async function actualizarFormularioLocal(
     }
 }
 
-export async function eliminarFormularioLocal(id: string) {
-    const currentFormulario = await buscarFormularioLocal(id)
+export async function deleteLocalForm(id: string) {
+    const currentFormulario = await findLocalForm(id)
 
     if (!currentFormulario) {
         throw new Error('Formulario local no encontrado.')
@@ -148,8 +148,8 @@ export async function eliminarFormularioLocal(id: string) {
     }
 }
 
-export async function marcarFormularioLocalSincronizado(id: string, servidorId: string) {
-    const currentFormulario = await buscarFormularioLocal(id)
+export async function markLocalFormSynced(id: string, servidorId: string) {
+    const currentFormulario = await findLocalForm(id)
 
     if (!currentFormulario) {
         throw new Error('Formulario local no encontrado.')
@@ -174,8 +174,8 @@ export async function marcarFormularioLocalSincronizado(id: string, servidorId: 
     }
 }
 
-export async function marcarFormularioLocalConError(id: string, message: string) {
-    const currentFormulario = await buscarFormularioLocal(id)
+export async function markLocalFormError(id: string, message: string) {
+    const currentFormulario = await findLocalForm(id)
 
     if (!currentFormulario) {
         throw new Error('Formulario local no encontrado.')

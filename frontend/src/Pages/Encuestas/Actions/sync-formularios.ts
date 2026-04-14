@@ -1,25 +1,23 @@
-import { crearFormulario } from './formularios-api'
-import { toFormularioBody } from './formulario-adapter'
-import {
-    marcarFormularioLocalConError,
-    marcarFormularioLocalSincronizado,
-} from './local-formulario-store'
+import { stopSyncForm, getSyncQueue, getSyncForm } from './sync-worker-client'
 import type { FormularioLocal } from '../interfaces/types'
 
-// sincronizacion con local del form
-export async function sincronizarFormularioLocal(formulario: FormularioLocal) {
+export { FORMULARIOS_SYNC_EVENT } from './sync-worker-client'
+
+export const syncFormLocal = async (formulario: FormularioLocal) => {
     if (formulario.estadoLocal === 'SYNCED') {
-        return formulario
+        return {
+            skipped: true,
+            synced: false,
+        }
     }
 
-    try {
-        const response = await crearFormulario(toFormularioBody(formulario))
-        return await marcarFormularioLocalSincronizado(formulario.id, response.id)
-    } catch (error) {
-        const message =
-            error instanceof Error ? error.message : 'No se pudo sincronizar el formulario.'
+    return getSyncForm(formulario.id)
+}
 
-        await marcarFormularioLocalConError(formulario.id, message)
-        throw new Error(message)
-    }
+export const syncLocalQueue = (usuarioId: string) => {
+    return getSyncQueue(usuarioId)
+}
+
+export const closeSyncForm = () => {
+    stopSyncForm()
 }
