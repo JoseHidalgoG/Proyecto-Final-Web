@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MONGO_URI: ${MONGO_URI:?Configura MONGO_URI en .env}
+      JWT_SECRET: ${JWT_SECRET:?Configura JWT_SECRET en .env}
+    ports:
+      - "7070:7070"
+      - "9090:9090"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
