@@ -60,7 +60,12 @@ public class Main {
             //configuracion de CORS
             javalinConfig.bundledPlugins.enableCors(cors ->
                     cors.addRule(regla -> {
-                        regla.anyHost();
+                        regla.allowHost(
+                                "http://localhost:5173",
+                                "http://127.0.0.1:5173",
+                                "http://localhost:4173",
+                                "http://127.0.0.1:4173"
+                        );
                         regla.allowCredentials = true;
                     }));
 
