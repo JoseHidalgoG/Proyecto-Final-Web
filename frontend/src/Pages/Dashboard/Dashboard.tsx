@@ -7,10 +7,9 @@ import {
   WifiOff,
 } from "lucide-react"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/Pages/Auth/hooks/auth-context"
-import { Link } from "react-router-dom"
 
 const modulePreviews = [
   {
@@ -23,6 +22,7 @@ const modulePreviews = [
     title: "Pendientes",
     description: "Registros locales preparados para modificar, borrar o enviar.",
     icon: SendHorizontal,
+    url: "/app/pendientes",
   },
   {
     title: "Mapa",
@@ -32,7 +32,9 @@ const modulePreviews = [
   {
     title: "Usuarios",
     description: "Creación de usuarios, roles y acceso del personal autorizado.",
+    adminOnly: true,
     icon: UserCog,
+    url: "/app/usuarios",
   },
 ]
 
@@ -40,6 +42,9 @@ export function AppHomePage() {
   const navigate = useNavigate()
   const { session, signOut } = useAuth()
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const availableModules = modulePreviews.filter(
+    (module) => !module.adminOnly || session?.rol === "ADMIN",
+  )
 
   async function handleSignOut() {
     setIsSigningOut(true)
@@ -88,20 +93,41 @@ export function AppHomePage() {
             <WifiOff aria-hidden="true" className="h-7 w-7" />
             <h2 className="mt-5 text-2xl font-bold">Modo local activo</h2>
             <p className="mt-3 text-sm leading-6 text-primary-foreground/85">
-
+              Los formularios se guardan primero en el dispositivo y se envían
+              desde pendientes.
             </p>
           </div>
 
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {modulePreviews.map((module) => {
+              {availableModules.map((module) => {
                 const Icon = module.icon
 
-                return (
-                  <Link to={module.url as string}>
+                if (!module.url) {
+                  return (
                     <button
-                      className="min-h-36 rounded-lg border border-border bg-background p-4 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                      className="min-h-36 rounded-lg border border-border bg-background p-4 text-left opacity-70"
+                      disabled
                       key={module.title}
+                      type="button"
+                    >
+                      <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-primary">
+                        <Icon aria-hidden="true" className="h-5 w-5" />
+                      </span>
+                      <span className="mt-4 block text-base font-bold text-foreground">
+                        {module.title}
+                      </span>
+                      <span className="mt-2 block text-sm leading-6 text-muted-foreground">
+                        {module.description}
+                      </span>
+                    </button>
+                  )
+                }
+
+                return (
+                  <Link key={module.title} to={module.url}>
+                    <button
+                      className="min-h-36 w-full rounded-lg border border-border bg-background p-4 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       type="button"
                     >
                       <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-primary">

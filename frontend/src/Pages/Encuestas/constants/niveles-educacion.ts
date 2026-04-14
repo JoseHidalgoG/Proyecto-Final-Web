@@ -1,8 +1,8 @@
 import type { NivelEducacion } from "../interfaces/types"
 
 export const nivelesEducacion = [
-  { value: "PRIMARIA", label: "Primaria" },
-  { value: "SECUNDARIA", label: "Secundaria" },
+  { value: "PRIMARIA", label: "Básico" },
+  { value: "SECUNDARIA", label: "Medio" },
   { value: "GRADO_UNIVERSITARIO", label: "Grado Universitario" },
   { value: "POSTGRADO", label: "Postgrado" },
   { value: "DOCTORADO", label: "Doctorado" },
