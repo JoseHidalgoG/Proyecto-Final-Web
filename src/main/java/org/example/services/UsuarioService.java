@@ -16,10 +16,32 @@ import java.util.List;
 * Aqui se llama las funciones de repositorio para usuarios aplicando la lógica de negocio
 * */
 public class UsuarioService {
+    private static final String ADMIN_DEFAULT_NOMBRE = "Administrador";
+    private static final String ADMIN_DEFAULT_EMAIL = "admin@encuestas.local";
+    private static final String ADMIN_DEFAULT_PASSWORD = "admin1234";
+
     private final UsuarioRepository usuarioRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
+    }
+
+    public void crearAdminDefaultSiNoExiste() {
+        Usuario admin = usuarioRepository.buscarPorEmail(ADMIN_DEFAULT_EMAIL);
+
+        if(admin != null) {
+            return;
+        }
+
+        String passwordHash = BCrypt.hashpw(ADMIN_DEFAULT_PASSWORD, BCrypt.gensalt());
+        Usuario usuario = new Usuario(
+                ADMIN_DEFAULT_NOMBRE,
+                ADMIN_DEFAULT_EMAIL,
+                passwordHash,
+                Usuario.Rol.ADMIN
+        );
+
+        usuarioRepository.crear(usuario);
     }
 
     /*

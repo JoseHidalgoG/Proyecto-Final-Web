@@ -35,6 +35,7 @@ public class Main {
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
         FormularioService formularioService = new FormularioService(formularioRepository, usuarioRepository);
         WsFormularioHandler wsHandler = new WsFormularioHandler(formularioService);
+        usuarioService.crearAdminDefaultSiNoExiste();
 
         //servidor gRPC
         io.grpc.Server grpcServer;

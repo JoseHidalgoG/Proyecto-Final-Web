@@ -50,6 +50,7 @@ repositories {
 
 dependencies {
     implementation 'io.javalin:javalin:7.0.1' //javalin
+    implementation 'org.slf4j:slf4j-simple:2.0.17' //logger para javalin
     implementation 'dev.morphia.morphia:morphia-core:2.5.2' //MongoDB y morphia
     implementation 'org.mongodb:mongodb-driver-sync:4.11.0'
     implementation 'org.mindrot:jbcrypt:0.4' //metodos para encriptar claves, usadas en los servicios
