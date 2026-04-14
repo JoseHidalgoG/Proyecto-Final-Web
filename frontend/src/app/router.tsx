@@ -8,6 +8,7 @@ import { AppHomePage } from "@/Pages/Dashboard/Dashboard"
 import { CapturaPage } from "@/Pages/Encuestas/Captura"
 import { PendientesPage } from "@/Pages/Encuestas/Pendientes"
 import { SyncQueueRuntime } from "@/Pages/Encuestas/SyncQueueRuntime"
+import { MapaPage } from "@/Pages/Mapa/Mapa"
 import { UsuariosPage } from "@/Pages/Usuarios/Usuarios"
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -81,6 +82,14 @@ export function AppRouter() {
               </ProtectedRoute>
             }
             path="/app/pendientes"
+          />
+          <Route
+            element={
+              <ProtectedRoute>
+                <MapaPage />
+              </ProtectedRoute>
+            }
+            path="/app/mapa"
           />
           <Route
             element={

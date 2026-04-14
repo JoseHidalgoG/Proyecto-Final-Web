@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/Pages/Auth/hooks/auth-context"
 
-import { guardarFormularioLocal } from "./Actions/local-formulario-store"
+import { saveLocalForm } from "./Actions/local-formulario-store"
 import {
   isNivelEducacion,
   nivelesEducacion,
@@ -197,7 +197,7 @@ export function CapturaPage() {
         throw new Error("No se pudo obtener una geolocalización válida.")
       }
 
-      const savedFormulario = await guardarFormularioLocal({
+      const savedFormulario = await saveLocalForm({
         fotoBase64: form.fotoBase64,
         latitud: position.coords.latitude,
         longitud: position.coords.longitude,
