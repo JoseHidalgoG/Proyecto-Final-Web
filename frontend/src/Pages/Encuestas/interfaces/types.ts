@@ -1,6 +1,6 @@
 export type NivelEducacion =
-  | "PRIMARIA"
-  | "SECUNDARIA"
+  | "BASICO"
+  | "MEDIO"
   | "GRADO_UNIVERSITARIO"
   | "POSTGRADO"
   | "DOCTORADO"

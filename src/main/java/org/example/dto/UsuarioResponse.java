@@ -2,14 +2,12 @@ package org.example.dto;
 
 import org.example.model.Usuario;
 
-import java.time.LocalDateTime;
-
 public record UsuarioResponse(
         String id,
         String nombre,
         String email,
         Usuario.Rol rol,
-        LocalDateTime fechaCreacion,
+        String fechaCreacion,
         Boolean activo
 ) {
     public static UsuarioResponse from(Usuario usuario)
@@ -19,7 +17,7 @@ public record UsuarioResponse(
                 usuario.getNombre(),
                 usuario.getEmail(),
                 usuario.getRol(),
-                usuario.getFechaCreacion(),
+                usuario.getFechaCreacion().toString(),
                 usuario.getEstado()
         );
     }

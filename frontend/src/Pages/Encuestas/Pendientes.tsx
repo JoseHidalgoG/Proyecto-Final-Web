@@ -26,6 +26,8 @@ import { sincronizarFormularioLocal } from "./Actions/sync-formularios"
 import {
   isNivelEducacion,
   nivelesEducacion,
+  normalizarNivelEducacion,
+  obtenerEtiquetaNivelEducacion,
 } from "./constants/niveles-educacion"
 import type { FormularioLocal, NivelEducacion } from "./interfaces/types"
 
@@ -133,13 +135,19 @@ export function PendientesPage() {
   }
 
   function startEdit(formulario: FormularioLocal) {
+    const nivelEducacion = normalizarNivelEducacion(formulario.nivelEducacion)
+
     setEditId(formulario.id)
     setEditForm({
-      nivelEducacion: formulario.nivelEducacion,
+      nivelEducacion: nivelEducacion ?? "",
       nombreEncuestado: formulario.nombreEncuestado,
       sector: formulario.sector,
     })
-    setErrors({})
+    setErrors(
+      nivelEducacion
+        ? {}
+        : { nivelEducacion: "Este formulario tiene un nivel escolar inválido." },
+    )
     setMessage("")
   }
 
@@ -487,7 +495,10 @@ export function PendientesPage() {
                             {formulario.nombreEncuestado}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {formulario.sector} · {formulario.nivelEducacion}
+                            {formulario.sector} ·{" "}
+                            {obtenerEtiquetaNivelEducacion(
+                              formulario.nivelEducacion,
+                            )}
                           </p>
                         </div>
                         <Badge
