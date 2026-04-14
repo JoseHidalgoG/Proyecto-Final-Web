@@ -26,8 +26,13 @@ public class WsFormularioHandler {
 
     public void onConnect(WsConnectContext ctx)
     {
-        //se pide el token de la sesion
-        String token = ctx.queryParam("token");
+        //se pide el token desde la cookie de sesion
+        String token = ctx.cookie(JwtUtil.COOKIE_NAME);
+
+        if(token == null || token.isBlank()){
+            ctx.closeSession(1008, "Se requiere cookie de autenticacion");
+            return;
+        }
 
         //y luego obtiene el id del usuario asociado al token y se valida
         String usuarioId = JwtUtil.extraerUsuarioId(token);

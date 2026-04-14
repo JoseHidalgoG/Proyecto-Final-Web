@@ -18,11 +18,15 @@ import { useAuth } from "@/Pages/Auth/hooks/auth-context"
 import { cn } from "@/lib/utils"
 
 import {
-  actualizarFormularioLocal,
-  eliminarFormularioLocal,
-  listarFormulariosLocales,
+  updateLocalForm,
+  deleteLocalForm,
+  listLocalForms,
 } from "./Actions/local-formulario-store"
-import { sincronizarFormularioLocal } from "./Actions/sync-formularios"
+import {
+  FORMULARIOS_SYNC_EVENT,
+  syncLocalQueue,
+  syncFormLocal,
+} from "./Actions/sync-formularios"
 import {
   isNivelEducacion,
   nivelesEducacion,
@@ -83,7 +87,7 @@ export function PendientesPage() {
     setErrors({})
 
     try {
-      setFormularios(await listarFormulariosLocales(session.id))
+      setFormularios(await listLocalForms(session.id))
     } catch (error) {
       setErrors({
         general:
@@ -98,6 +102,18 @@ export function PendientesPage() {
 
   useEffect(() => {
     void loadFormularios()
+  }, [loadFormularios])
+
+  useEffect(() => {
+    function handleSyncEvent() {
+      void loadFormularios()
+    }
+
+    window.addEventListener(FORMULARIOS_SYNC_EVENT, handleSyncEvent)
+
+    return () => {
+      window.removeEventListener(FORMULARIOS_SYNC_EVENT, handleSyncEvent)
+    }
   }, [loadFormularios])
 
   function updateEditField<Field extends keyof EditFormState>(
@@ -181,7 +197,7 @@ export function PendientesPage() {
     }
 
     try {
-      await actualizarFormularioLocal(editId, {
+      await updateLocalForm(editId, {
         nivelEducacion: editForm.nivelEducacion,
         nombreEncuestado: editForm.nombreEncuestado.trim(),
         sector: editForm.sector.trim(),
@@ -205,7 +221,7 @@ export function PendientesPage() {
     }
 
     try {
-      await eliminarFormularioLocal(formulario.id)
+      await deleteLocalForm(formulario.id)
       setMessage("Formulario local borrado.")
       await loadFormularios()
     } catch (error) {
@@ -229,7 +245,7 @@ export function PendientesPage() {
     setMessage("")
 
     try {
-      await sincronizarFormularioLocal(formulario)
+      await syncFormLocal(formulario)
       setMessage("Formulario sincronizado.")
       await loadFormularios()
     } catch (error) {
@@ -251,33 +267,42 @@ export function PendientesPage() {
       return
     }
 
+    if (!session) {
+      return
+    }
+
     setIsSyncingAll(true)
     setErrors({})
     setMessage("")
 
-    let enviados = 0
-    let fallidos = 0
+    try {
+      const result = await syncLocalQueue(session.id)
+      await loadFormularios()
 
-    for (const formulario of pendientes) {
-      try {
-        await sincronizarFormularioLocal(formulario)
-        enviados += 1
-      } catch {
-        fallidos += 1
+      if (result.failed > 0) {
+        setErrors({
+          general: `${result.failed} formulario(s) no se pudieron sincronizar.`,
+        })
+        return
       }
-    }
 
-    await loadFormularios()
-    setIsSyncingAll(false)
+      if (result.synced === 0) {
+        setMessage("No había formularios listos para sincronizar.")
+        return
+      }
 
-    if (fallidos > 0) {
+      setMessage(`${result.synced} formulario(s) sincronizado(s).`)
+    } catch (error) {
       setErrors({
-        general: `${fallidos} formulario(s) no se pudieron sincronizar.`,
+        general:
+          error instanceof Error
+            ? error.message
+            : "No se pudieron sincronizar los formularios.",
       })
-      return
+      await loadFormularios()
+    } finally {
+      setIsSyncingAll(false)
     }
-
-    setMessage(`${enviados} formulario(s) sincronizado(s).`)
   }
 
   return (
