@@ -443,7 +443,7 @@ export function MapaPage() {
                         </span>{" "}
                         {formatDate(selectedRegistro.creadoEn)}
                       </p>
-                      <p>
+                      {/*<p>
                         <span className="font-semibold text-foreground">
                           Latitud:
                         </span>{" "}
@@ -454,7 +454,7 @@ export function MapaPage() {
                           Longitud:
                         </span>{" "}
                         {selectedRegistro.longitud.toFixed(6)}
-                      </p>
+                      </p>*/}
                     </div>
                   </div>
                 </div>
