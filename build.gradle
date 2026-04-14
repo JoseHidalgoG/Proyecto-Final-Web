@@ -11,6 +11,39 @@ application{
     mainClass = "org.example.Main"
 }
 
+tasks.named('run') {
+    doFirst {
+        def envFile = rootProject.file('.env')
+
+        if (envFile.exists()) {
+            envFile.eachLine { line ->
+                def trimmedLine = line.trim()
+
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    return
+                }
+
+                def separatorIndex = trimmedLine.indexOf('=')
+
+                if (separatorIndex <= 0) {
+                    return
+                }
+
+                def key = trimmedLine.substring(0, separatorIndex).trim()
+                def value = trimmedLine.substring(separatorIndex + 1).trim()
+
+                environment key, value
+            }
+        }
+
+        def mongoUri = environment['MONGO_URI'] ?: System.getenv('MONGO_URI')
+
+        if (!mongoUri) {
+            throw new GradleException('Configura MONGO_URI en .env antes de ejecutar el backend.')
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
