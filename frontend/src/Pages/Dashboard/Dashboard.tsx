@@ -94,7 +94,7 @@ export function AppHomePage() {
         <section className="grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
           <div className="rounded-lg border border-border bg-primary p-5 text-primary-foreground shadow-sm sm:p-6">
             <WifiOff aria-hidden="true" className="h-7 w-7" />
-            <h2 className="mt-5 text-2xl font-bold">Modo local activo</h2>
+            <h2 className="mt-5 text-2xl font-bold">Bienvenido</h2>
             <p className="mt-3 text-sm leading-6 text-primary-foreground/85">
               Los formularios se guardan primero en el dispositivo y se envían
               desde pendientes.
