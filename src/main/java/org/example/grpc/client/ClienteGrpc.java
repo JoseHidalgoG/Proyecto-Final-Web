@@ -46,6 +46,7 @@ public class ClienteGrpc  extends JFrame {
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
+                .maxInboundMessageSize(1024 * 1024 * 20)
                 .build();
 
         stub = FormularioGrpcServiceGrpc.newBlockingStub(channel);

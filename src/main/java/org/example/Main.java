@@ -48,6 +48,7 @@ public class Main {
             grpcServer = io.grpc.ServerBuilder
                 .forPort(9090)
                 .addService(new FormularioGrpcServiceImpl(formularioRepository, usuarioRepository))
+                    .maxInboundMessageSize(1024 * 1024 * 20)
                 .build()
                 .start();
             System.out.println("gRPC escuchando en puerto 9090");
